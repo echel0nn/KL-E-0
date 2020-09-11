@@ -1,0 +1,1 @@
+{"firefox":"","ipconfig":"","systeminfo":"TGludXgK","wifi":null}
